@@ -37,9 +37,9 @@ mac{
     # LIBS += -lamd -lcamd -lccolamd -lcholmod -lcolamd -lcxsparse -lblas
 
     # system libraries
-    !exists(/usr/local/lib/libcholmod.a) : error("install homebrew from the website 'brew.sh' then in the terminal run 'brew tap homebrew/science' and 'brew install suite-sparse'") 
-    !exists(/usr/lib/liblapack.dylib) : error("missing '/usr/lib/liblapack.dylib'") 
-    
+    !exists(/usr/local/lib/libcholmod.a) : error("install homebrew from the website 'brew.sh' then in the terminal run 'brew tap homebrew/science' and 'brew install suite-sparse'")
+    !exists(/usr/lib/liblapack.dylib) : error("missing '/usr/lib/liblapack.dylib'")
+
     INCLUDEPATH += /usr/local/include
     LIBS *= -L/usr/local/lib
     LIBS *= -lamd -lcamd -lccolamd -lcolamd -lcxsparse -lblas -lcholmod
@@ -50,10 +50,12 @@ mac{
 # ubuntu 32/64 bits: take them from the OS
 unix:!mac{
     # @todo a better way of checking for packages in linux?
-    !exists(/usr/lib/libcholmod.a):error("CHOLMOD (suitesparse) not found! sudo apt-get install libsuitesparse-dev")
-    !exists(/usr/include/suitesparse):error("SuiteSparse dev not found! sudo apt-get install libsuitesparse-dev")
+    !exists(/usr/lib/libcholmod.so):error("CHOLMOD (suitesparse) not found! sudo apt-get install libsuitesparse-dev")
+    #!exists(/usr/include/suitesparse):error("SuiteSparse dev not found! sudo apt-get install libsuitesparse-dev")
 
-    INCLUDEPATH += /usr/include/suitesparse
+    #INCLUDEPATH += /usr/include/suitesparse
     LIBS *= -L/usr/lib
     LIBS *= -lamd -lcamd -lccolamd -lcholmod -lcolamd -lcxsparse -lblas
+    # Workaround http://eigen.tuxfamily.org/bz/show_bug.cgi?id=1086
+    DEFINES += "UF_long=SuiteSparse_long"
 }

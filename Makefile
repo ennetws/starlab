@@ -17,8 +17,14 @@ ifeq ($(OS),Windows_NT)
   SPEC=
   OPEN=explorer.exe
   DELETEREC=
-else  
-  SPEC=macx-g++
+else
+  UNAME_S := $(shell uname -s)
+  ifeq ($(UNAME_S),Linux)
+    SPEC=
+  endif
+  ifeq ($(UNAME_S),Darwin)
+    SPEC=-spec macx-g++
+  endif
   OPEN=open
   DELETEREC=rm -rf
   MKDIR=mkdir -p
@@ -26,6 +32,7 @@ endif
 
 MINI_BUILD = ../starlab_mini_build
 FULL_BUILD = ../starlab_full_build
+SOURCE_DIR = $(shell pwd)
 
 reinitialize:
 	$(DELETEREC) /Applications/Starlab.app
@@ -41,14 +48,15 @@ open:
 
 mini:
 	$(MKDIR) $(MINI_BUILD)
-	cd $(MINI_BUILD); qmake -spec $(SPEC) ../starlab/starlab_mini.pro
+	cd $(MINI_BUILD); qmake $(SPEC) $(SOURCE_DIR)/starlab_mini.pro
 	cd $(MINI_BUILD); make -j8
 
 full:
 	$(MKDIR) $(FULL_BUILD)
-	cd $(FULL_BUILD); qmake -spec $(SPEC) ../starlab/starlab_full.pro
+	cd $(FULL_BUILD); qmake $(SPEC) $(SOURCE_DIR)/starlab_full.pro
 	cd $(FULL_BUILD); make -j8
 
 clean:
 	$(DELETEREC) /Applications/Starlab.app
-	$(DELETEREC) ../starlab_*_build
+	$(DELETEREC) $(MINI_BUILD)
+	$(DELETEREC) $(FULL_BUILD)
